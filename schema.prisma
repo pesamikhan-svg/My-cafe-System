@@ -52,14 +52,14 @@ model Order {
 }
 
 model OrderItem {
-  id           String  @id @default(cuid())
-  orderId      String
-  order        Order   @relation(fields: [orderId], references: [id])
-  productId    String
-  productName  String
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  productName String
   productPrice Float
-  quantity     Int
-  notes        String?
+  quantity  Int
+  notes     String?
 }
 
 model Customer {
@@ -138,46 +138,46 @@ model Attendance {
 }
 
 model SalaryRecord {
-  id               String    @id @default(cuid())
+  id               String   @id @default(cuid())
   staffId          String
-  staff            Staff     @relation(fields: [staffId], references: [id])
+  staff            Staff    @relation(fields: [staffId], references: [id])
   month            Int
   year             Int
   basicSalary      Float
-  overtimeHours    Float     @default(0)
-  overtimeRate     Float     @default(0)
-  overtimePay      Float     @default(0)
-  bonuses          Float     @default(0)
-  allowances       Float     @default(0)
-  deductions       Float     @default(0)
-  advanceDeduction Float     @default(0)
-  latePenalties    Float     @default(0)
+  overtimeHours    Float    @default(0)
+  overtimeRate     Float    @default(0)
+  overtimePay      Float    @default(0)
+  bonuses          Float    @default(0)
+  allowances       Float    @default(0)
+  deductions       Float    @default(0)
+  advanceDeduction Float    @default(0)
+  latePenalties    Float    @default(0)
   totalSalary      Float
-  paid             Boolean   @default(false)
+  paid             Boolean  @default(false)
   paidDate         DateTime?
   notes            String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model Payroll {
-  id            String   @id @default(cuid())
+  id            String        @id @default(cuid())
   staffId       String
-  staff         Staff    @relation(fields: [staffId], references: [id])
+  staff         Staff         @relation(fields: [staffId], references: [id])
   month         Int
   year          Int
-  generatedDate DateTime @default(now())
+  generatedDate DateTime      @default(now())
   totalSalaries Float
   status        String   @default("pending")
   createdAt     DateTime @default(now())
 }
 
 model RevenueEntry {
-  id        String   @id @default(cuid())
-  date      DateTime
-  amount    Float
-  source    String
-  notes     String?
+  id      String   @id @default(cuid())
+  date    DateTime
+  amount  Float
+  source  String
+  notes   String?
   createdAt DateTime @default(now())
 }
 
@@ -205,10 +205,10 @@ model COGSEntry {
 }
 
 model DiscountEntry {
-  id        String   @id @default(cuid())
-  date      DateTime
-  amount    Float
-  reason    String?
+  id      String   @id @default(cuid())
+  date    DateTime
+  amount  Float
+  reason  String?
   createdAt DateTime @default(now())
 }
 
