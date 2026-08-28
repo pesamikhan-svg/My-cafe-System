@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AppMeta {
+  id    String @id
+  value String
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  price       Float
+  category    String
+  image       String   @default("")
+  description String?
+  available   Boolean  @default(true)
+  sizes       String?
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id   String @id
+  name String
+  icon String @default("grid")
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  invoiceNumber String?
+  tableNumber   Int?
+  customerName  String?
+  customerId    String?
+  subtotal      Float
+  discount      Float       @default(0)
+  tax           Float
+  serviceCharge Float
+  total         Float
+  status        String      @default("pending")
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  items         OrderItem[]
+  payments      Payment[]
+}
+
+model OrderItem {
+  id           String  @id @default(cuid())
+  orderId      String
+  order        Order   @relation(fields: [orderId], references: [id])
+  productId    String
+  productName  String
+  productPrice Float
+  quantity     Int
+  notes        String?
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  totalOrders Int      @default(0)
+  totalSpent  Float    @default(0)
+  createdAt   DateTime @default(now())
+  // orders linked via Order.customerId
+}
+
+model Table {
+  id     Int     @id
+  seats  Int     @default(2)
+  status String  @default("available")
+  server String?
+}
+
+model Reservation {
+  id        String   @id @default(cuid())
+  name      String
+  guests    Int
+  time      String
+  date      String
+  status    String   @default("pending")
+  phone     String?
+  tableId   Int?
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  amount    Float
+  method    String
+  status    String   @default("completed")
+  createdAt DateTime @default(now())
+}
+
+model Staff {
+  id            String         @id @default(cuid())
+  staffId       String         @unique
+  fullName      String
+  email         String?
+  phone         String
+  cnic          String         @unique
+  address       String?
+  joiningDate   DateTime
+  position      String
+  basicSalary   Float
+  profilePhoto  String?
+  isAdmin       Boolean        @default(false)
+  isActive      Boolean        @default(true)
+  role          String         @default("staff")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  attendances   Attendance[]
+  salaryRecords SalaryRecord[]
+  payrolls      Payroll[]
+}
+
+model Attendance {
+  id          String   @id @default(cuid())
+  staffId     String
+  staff       Staff    @relation(fields: [staffId], references: [id])
+  date        DateTime
+  checkIn     String?
+  checkOut    String?
+  status      String   @default("present")
+  hoursWorked Float?
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+model SalaryRecord {
+  id               String    @id @default(cuid())
+  staffId          String
+  staff            Staff     @relation(fields: [staffId], references: [id])
+  month            Int
+  year             Int
+  basicSalary      Float
+  overtimeHours    Float     @default(0)
+  overtimeRate     Float     @default(0)
+  overtimePay      Float     @default(0)
+  bonuses          Float     @default(0)
+  allowances       Float     @default(0)
+  deductions       Float     @default(0)
+  advanceDeduction Float     @default(0)
+  latePenalties    Float     @default(0)
+  totalSalary      Float
+  paid             Boolean   @default(false)
+  paidDate         DateTime?
+  notes            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Payroll {
+  id            String   @id @default(cuid())
+  staffId       String
+  staff         Staff    @relation(fields: [staffId], references: [id])
+  month         Int
+  year          Int
+  generatedDate DateTime @default(now())
+  totalSalaries Float
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+}
+
+model RevenueEntry {
+  id        String   @id @default(cuid())
+  date      DateTime
+  amount    Float
+  source    String
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model ExpenseEntry {
+  id          String   @id @default(cuid())
+  date        DateTime
+  amount      Float
+  category    String
+  description String
+  isSalary    Boolean  @default(false)
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+model COGSEntry {
+  id          String   @id @default(cuid())
+  date        DateTime
+  productName String
+  quantity    Float
+  unit        String
+  unitCost    Float
+  totalCost   Float
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+model DiscountEntry {
+  id        String   @id @default(cuid())
+  date      DateTime
+  amount    Float
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+model ExpenseCategory {
+  id     String @id
+  name   String
+  icon   String @default("dollar-sign")
+  budget Float  @default(0)
+}
